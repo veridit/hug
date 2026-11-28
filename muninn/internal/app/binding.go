@@ -665,7 +665,10 @@ func (b Binding) RememberSafe(ctx context.Context, a *App, content, category, sc
 // RememberPlaced accepts a session-relative place alongside an optional literal
 // scope. Both advisory checks ask the writer, never silently reclassify text.
 func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, scope string, tags []string, safeReason, place, placeReason string, decisions ...RememberDecision) (store.Unit, bool, error) {
-	// One write turn for the whole flow: duplicate check, save, index pass.
+	// The text is embedded before the write turn (t0qap9): the duplicate
+	// check searches with that vector, so no embed runs under the turn.
+	ctx = a.embedForDedupe(ctx, strings.TrimSpace(content))
+	// One write turn for the whole flow: duplicate check, save, index.
 	ctx, release, err := a.WriteTurn(ctx)
 	if err != nil {
 		return store.Unit{}, false, err

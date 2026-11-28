@@ -8,7 +8,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/veridit/hug/muninn/internal/embed"
 	"github.com/veridit/hug/muninn/internal/extract"
+	"github.com/veridit/hug/muninn/internal/index"
 	"github.com/veridit/hug/muninn/internal/ingest"
 	"github.com/veridit/hug/muninn/internal/search"
 	"github.com/veridit/hug/muninn/internal/store"
@@ -135,6 +137,15 @@ func (b Binding) memoryMatches(ctx context.Context, a *App, content string) ([]s
 	o.Limit, o.MinScore, o.SemanticSlots, o.SemanticFloor = 32, 0, 32, 0
 	o.Scopes, o.ScopeFor, o.Kinds = b.Scopes, b.writableScopeFor, []string{"memory"}
 	o.DocumentQuery = true
+	if v, ok := ctx.Value(dedupeVecKey{}).(dedupeVec); ok && v.text == content {
+		o.Embedded, o.QueryVector = true, v.vec
+	} else if a.DB.HasTurn(ctx) {
+		// Under the write turn the embedder is never called (t0qap9): with
+		// no vector embedded before the turn, the check is exact and
+		// keyword only, and the next remember or capture of the same text
+		// finds it by its content.
+		o.Embedded = true
+	}
 	hits, err := a.Searcher.Search(ctx, content, o)
 	if err != nil {
 		return nil, err
@@ -177,4 +188,31 @@ func (b Binding) reinforceMemory(ctx context.Context, a *App, u store.Unit, scor
 		err = a.SaveAuditCtx(ctx, AuditRun{Time: time.Now().UTC(), Harness: "remember", Trigger: "remember", Scope: u.Scope, Report: CaptureReport{Actions: []CaptureAction{{Action: "reinforce", Target: u.SID, Score: score, Scope: u.Scope, Reason: reason}}}})
 	}
 	return u, true, err
+}
+
+type dedupeVecKey struct{}
+
+// dedupeVec is a text embedded as a document before the write turn.
+type dedupeVec struct {
+	text string
+	vec  []float32
+}
+
+// embedForDedupe embeds content the way memoryMatches compares it (a
+// document under the current pipeline), before the caller takes the write
+// turn, and carries the vector in ctx. A failed embed carries nil: the
+// check then runs without cosine, as it does when the embedder errs.
+func (a *App) embedForDedupe(ctx context.Context, content string) context.Context {
+	if a.Searcher == nil || a.Searcher.Embedder == nil || content == "" || a.DB.HasTurn(ctx) {
+		return ctx
+	}
+	e := a.Searcher.Embedder
+	if a.DB.GetMeta("pipeline_hash") != index.PipelineHash(e.Model()) {
+		return ctx // Search compares documents only under the current pipeline
+	}
+	var vec []float32
+	if vecs, err := e.Embed(ctx, embed.Documents(e, []string{index.EmbeddingText("", content)})); err == nil && len(vecs) == 1 {
+		vec = vecs[0]
+	}
+	return context.WithValue(ctx, dedupeVecKey{}, dedupeVec{content, vec})
 }

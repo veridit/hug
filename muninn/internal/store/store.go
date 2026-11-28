@@ -208,6 +208,12 @@ CREATE TABLE IF NOT EXISTS neighbors (
   PRIMARY KEY (unit_id, nbr_id)
 );
 CREATE INDEX IF NOT EXISTS neighbors_nbr ON neighbors(nbr_id);
+-- Neighbour-list work an index pass committed but has not done yet
+-- (t0qap9): units whose lists are recomputed (removed=0) or detached
+-- (removed=1), in order. Written in the transaction that changed them and
+-- consumed by the pass's neighbour step, so a pass cut off between its
+-- short steps is finished by the next one.
+CREATE TABLE IF NOT EXISTS index_pending (seq INTEGER PRIMARY KEY, unit_id INTEGER NOT NULL, removed INTEGER NOT NULL);
 -- Concept graph (seid search): unigram concepts, unit membership, communities.
 CREATE TABLE IF NOT EXISTS concepts (id INTEGER PRIMARY KEY, term TEXT NOT NULL UNIQUE);
 CREATE TABLE IF NOT EXISTS unit_concepts (

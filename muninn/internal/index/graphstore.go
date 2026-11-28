@@ -2,6 +2,7 @@ package index
 
 import (
 	"bytes"
+	"context"
 	"database/sql"
 	"encoding/binary"
 	"encoding/gob"
@@ -301,12 +302,12 @@ func (ix *Indexer) moveGraph() error {
 	return nil
 }
 
-// finishGraphMove publishes only a committed move. The transaction's meta
+// publishGraphMove publishes only a committed move. The transaction's meta
 // receipt rolls back with the graph, and failures never claim success in logs.
-func (ix *Indexer) finishGraphMove() {
-	msg := ix.graphMovePending
+func (ix *Indexer) publishGraphMove(msg string) {
+	ix.mu.Lock()
 	ix.GraphMoved = msg
-	ix.graphMovePending = ""
+	ix.mu.Unlock()
 	if msg != "" && ix.DB.Path != "" {
 		if f, err := os.OpenFile(filepath.Join(filepath.Dir(ix.DB.Path), "hook.log"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600); err == nil {
 			fmt.Fprintf(f, "%s %s\n", time.Now().Format(time.RFC3339), msg)
@@ -318,22 +319,20 @@ func (ix *Indexer) finishGraphMove() {
 // MoveGraph moves a gob graph into the tables in its own transaction
 // (hug mem upgrade --apply). It reports whether there was one to move.
 func (ix *Indexer) MoveGraph() (bool, error) {
-	ix.GraphMoved, ix.graphMovePending = "", ""
-	defer func() { ix.graphMovePending = "" }()
 	if !ix.GraphNeedsMove() {
+		ix.publishGraphMove("")
 		return false, nil
 	}
-	if _, err := ix.DB.Exec(`BEGIN IMMEDIATE`); err != nil {
+	moved := ""
+	if err := ix.step(context.Background(), func() error {
+		ix.GraphMoved, ix.graphMovePending = "", ""
+		err := ix.moveGraph()
+		moved, ix.graphMovePending = ix.graphMovePending, ""
+		return err
+	}); err != nil {
+		ix.publishGraphMove("")
 		return false, err
 	}
-	if err := ix.moveGraph(); err != nil {
-		ix.DB.Exec(`ROLLBACK`)
-		return false, err
-	}
-	if _, err := ix.DB.Exec(`COMMIT`); err != nil {
-		ix.DB.Exec(`ROLLBACK`)
-		return false, err
-	}
-	ix.finishGraphMove()
-	return ix.GraphMoved != "", nil
+	ix.publishGraphMove(moved)
+	return moved != "", nil
 }

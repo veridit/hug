@@ -120,20 +120,16 @@ var ErrNotCurrent = errors.New("index: source not current")
 //
 // The caller holds the write turn and no transaction.
 func (ix *Indexer) ApplyNative(ctx context.Context, path string, before, after ingest.FileStat, changed []ingest.NativeMemory) error {
-	ix.GraphMoved, ix.graphMovePending = "", ""
-	defer func() { ix.graphMovePending = "" }()
-	if _, err := ix.DB.Exec(`BEGIN IMMEDIATE`); err != nil {
+	moved := ""
+	if err := ix.step(ctx, func() error {
+		ix.GraphMoved, ix.graphMovePending = "", ""
+		err := ix.applyNative(path, before, after, changed)
+		moved, ix.graphMovePending = ix.graphMovePending, ""
+		return err
+	}); err != nil {
 		return err
 	}
-	if err := ix.applyNative(path, before, after, changed); err != nil {
-		ix.DB.Exec(`ROLLBACK`)
-		return err
-	}
-	if _, err := ix.DB.Exec(`COMMIT`); err != nil {
-		ix.DB.Exec(`ROLLBACK`)
-		return err
-	}
-	ix.finishGraphMove()
+	ix.publishGraphMove(moved)
 	return nil
 }
 
@@ -199,46 +195,124 @@ type Options struct {
 	NotesRoots []string
 }
 
-// Run performs one incremental pass over every configured source. The whole
-// pass runs in one transaction: per-statement fsyncs dominated cold indexing
-// (profiled at 92% in syscalls), and a pass is all-or-nothing anyway.
-// store.Open caps the pool at one connection, so BEGIN/COMMIT on the pool
-// bracket every statement of the pass.
-// ErrBusy is returned with NoWait when another process holds the write lock.
+// ErrBusy is returned with NoWait when another process holds the write lock,
+// the write turn, or the pass lock.
 var ErrBusy = errors.New("index busy: another muninn process is writing")
 
+// Run performs one incremental pass over every configured source, as short
+// write steps (steps.go): the sources step (read, reconcile, communities,
+// queue neighbour work) in one transaction, as a pass always did, because
+// per-statement fsyncs dominated cold indexing (profiled at 92% in
+// syscalls); then the embedder, holding no lock, each batch's vectors
+// written in its own step; then the neighbour step.
+//
+// Called with ctx carrying the write turn (a write flow's own pass), Run
+// does the sources step only and leaves the rest owed (Owed): Finish does
+// it once the caller has dropped the turn (App.WriteTurn's release does),
+// so no embed runs under the turn. The neighbour lists then come out as
+// one whole pass would make them: the same work, in the same order.
 func (ix *Indexer) Run(ctx context.Context, o Options) (Stats, error) {
-	ix.GraphMoved, ix.graphMovePending = "", ""
-	defer func() { ix.graphMovePending = "" }()
+	ix.mu.Lock()
 	ix.Passes++
-	if ix.NoWait {
-		// busy_timeout applies per statement; drop it for the lock attempt,
-		// then restore store.Open's value. (It used to be put back as 5000,
-		// so every later write on a hook's or MCP server's connection gave up
-		// after 5 s instead of 30.)
-		ix.DB.Exec(`PRAGMA busy_timeout=0`)
-		_, err := ix.DB.Exec(`BEGIN IMMEDIATE`)
-		ix.DB.Exec(`PRAGMA busy_timeout=` + strconv.Itoa(store.BusyTimeout))
+	ix.mu.Unlock()
+	held := ix.DB.HasTurn(ctx)
+	if !held {
+		release, ok, err := ix.passLock(ix.NoWait)
 		if err != nil {
-			if strings.Contains(err.Error(), "SQLITE_BUSY") || strings.Contains(err.Error(), "locked") {
-				return Stats{}, ErrBusy
-			}
 			return Stats{}, err
 		}
-	} else if _, err := ix.DB.Exec(`BEGIN IMMEDIATE`); err != nil {
+		if !ok {
+			return Stats{}, ErrBusy
+		}
+		defer release()
+	}
+	t0 := time.Now()
+	var st Stats
+	lap := t0
+	phase := func(name string) {
+		now := time.Now()
+		st.Phases = append(st.Phases, Phase{name, now.Sub(lap)})
+		lap = now
+	}
+	moved := ""
+	if err := ix.step(ctx, func() error {
+		ix.GraphMoved, ix.graphMovePending = "", ""
+		err := ix.sourcesStep(ctx, o, &st, phase)
+		moved, ix.graphMovePending = ix.graphMovePending, ""
+		return err
+	}); err != nil {
+		return st, err
+	}
+	ix.publishGraphMove(moved)
+	if held {
+		ix.owed.Store(true)
+		st.Elapsed = time.Since(t0)
+		return st, nil
+	}
+	err := ix.finish(ctx, &st, phase)
+	st.Elapsed = time.Since(t0)
+	return st, err
+}
+
+// Owed reports whether a pass under a held write turn left work for Finish.
+func (ix *Indexer) Owed() bool { return ix.owed.Load() }
+
+// Finish does what a pass under a held write turn left: the embedder with
+// no lock, then the neighbour step. ctx must not carry the turn (see
+// store.WithoutTurn). It never queues behind another pass: one that holds
+// the pass lock looks for queued work again before it lets go (finish), so
+// ErrBusy leaves the work to it, or to the next pass.
+func (ix *Indexer) Finish(ctx context.Context) (Stats, error) {
+	if !ix.owed.Swap(false) {
+		return Stats{}, nil
+	}
+	release, ok, err := ix.passLock(true)
+	if err != nil {
 		return Stats{}, err
 	}
-	st, err := ix.run(ctx, o)
-	if err != nil {
-		ix.DB.Exec(`ROLLBACK`)
-		return st, err
+	if !ok {
+		return Stats{}, ErrBusy
 	}
-	if _, err := ix.DB.Exec(`COMMIT`); err != nil {
-		ix.DB.Exec(`ROLLBACK`)
-		return st, err
+	defer release()
+	var st Stats
+	t0 := time.Now()
+	lap := t0
+	err = ix.finish(ctx, &st, func(name string) {
+		now := time.Now()
+		st.Phases = append(st.Phases, Phase{name, now.Sub(lap)})
+		lap = now
+	})
+	st.Elapsed = time.Since(t0)
+	return st, err
+}
+
+// finish embeds what lacks a vector and does the queued neighbour work,
+// under the pass lock. A write flow that wrote meanwhile found the pass
+// lock taken (Finish, ErrBusy), so its work is looked for again before the
+// lock is let go, a few rounds at most; the next pass does any rest. A
+// capped pass (MaxEmbed, hooks) embeds in its first round only.
+func (ix *Indexer) finish(ctx context.Context, st *Stats, phase func(string)) error {
+	for round := 0; round < 3; round++ {
+		if round == 0 || ix.MaxEmbed == 0 {
+			embedded := st.Embedded
+			if err := ix.embedSteps(ctx, st); err != nil {
+				return err
+			}
+			if round == 0 {
+				phase("embed")
+			} else if st.Embedded == embedded && !ix.neighborsPending() {
+				break
+			}
+		}
+		if !ix.neighborsPending() {
+			break
+		}
+		if err := ix.step(ctx, ix.neighborStep); err != nil {
+			return err
+		}
 	}
-	ix.finishGraphMove()
-	return st, nil
+	phase("neighbors")
+	return nil
 }
 
 // SourceRecipe versions how sources are turned into units (keys, scopes,
@@ -249,27 +323,21 @@ func (ix *Indexer) Run(ctx context.Context, o Options) (Stats, error) {
 //	2: per-instance jcode scopes ("jcode@<instance>[:<project>]")
 const SourceRecipe = "2"
 
-func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
+// sourcesStep is the pass's first write step: sources, pruned sources,
+// anchors, communities, and the neighbour work they make, queued.
+func (ix *Indexer) sourcesStep(ctx context.Context, o Options, st *Stats, phase func(string)) error {
 	// A store whose graph is still the gob moves to the tables in the first
 	// pass, even one with nothing else to do (4vd1mz, crab 04:44).
 	if err := ix.moveGraph(); err != nil {
-		return Stats{}, fmt.Errorf("move concept graph: %w", err)
+		return fmt.Errorf("move concept graph: %w", err)
 	}
 	if ix.DB.GetMeta("source_recipe") != SourceRecipe {
 		if _, err := ix.DB.Exec(`UPDATE sources SET mtime_ns=-1, size=-1`); err != nil {
-			return Stats{}, err
+			return err
 		}
 		if err := ix.DB.SetMeta("source_recipe", SourceRecipe); err != nil {
-			return Stats{}, err
+			return err
 		}
-	}
-	t0 := time.Now()
-	var st Stats
-	lap := t0
-	phase := func(name string) {
-		now := time.Now()
-		st.Phases = append(st.Phases, Phase{name, now.Sub(lap)})
-		lap = now
 	}
 	ix.deltas = nil
 	var dirty, removed []int64
@@ -279,31 +347,31 @@ func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
 	}
 	for _, j := range o.Jcode {
 		if _, err := os.Stat(j.Dir); err == nil {
-			if err := collect(ix.IndexJcode(ctx, j.Dir, j.Prefix, &st)); err != nil {
-				return st, err
+			if err := collect(ix.IndexJcode(ctx, j.Dir, j.Prefix, st)); err != nil {
+				return err
 			}
 		}
 	}
 	if o.NativePath != "" {
 		if _, err := os.Stat(o.NativePath); err == nil {
-			if err := collect(ix.IndexNative(ctx, o.NativePath, &st)); err != nil {
-				return st, err
+			if err := collect(ix.IndexNative(ctx, o.NativePath, st)); err != nil {
+				return err
 			}
 		}
 	}
 	if len(o.NotesRoots) > 0 {
-		if err := collect(ix.IndexMarkdown(ctx, MarkdownFiles(o.NotesRoots), &st)); err != nil {
-			return st, err
+		if err := collect(ix.IndexMarkdown(ctx, MarkdownFiles(o.NotesRoots), st)); err != nil {
+			return err
 		}
 	}
-	if err := ix.prunedSources(&st, o); err != nil {
-		return st, err
+	if err := ix.prunedSources(st, o); err != nil {
+		return err
 	}
 	if ix.DB.GetMeta("anchor_recipe") != anchor.Recipe {
 		t := time.Now()
 		n, err := BackfillAnchors(ix.DB)
 		if err != nil {
-			return st, err
+			return err
 		}
 		st.AnchorsRecorded = n
 		if OnBackfill != nil {
@@ -314,63 +382,11 @@ func (ix *Indexer) run(ctx context.Context, o Options) (Stats, error) {
 	// Communities: DF-Louvain on the frontier of what changed.
 	if len(ix.deltas) > 0 {
 		if err := ix.applyDeltas(dirty); err != nil {
-			return st, err
+			return err
 		}
 		phase("communities")
 	}
-	ix.pipelineSwitched = false
-	if err := ix.EmbedDirty(ctx, &st); err != nil {
-		return st, err
-	}
-	phase("embed")
-	// A capped previous pass may already have checkpointed the source while
-	// its vector was still missing. Materializing that vector is a graph delta
-	// even if no source text changed in this pass. Do not mix staging models.
-	if !ix.pipelineSwitched && ix.Embedder != nil && ix.DB.GetMeta("pipeline_hash") == PipelineHash(ix.Embedder.Model()) {
-		for _, hash := range ix.embeddedHashes {
-			rows, err := ix.DB.Query(`SELECT id FROM units WHERE active=1 AND content_hash=?`, hash)
-			if err != nil {
-				return st, err
-			}
-			for rows.Next() {
-				var id int64
-				if err := rows.Scan(&id); err != nil {
-					rows.Close()
-					return st, err
-				}
-				dirty = append(dirty, id)
-			}
-			err = rows.Err()
-			rows.Close()
-			if err != nil {
-				return st, err
-			}
-		}
-	}
-	if ix.pipelineSwitched {
-		// New model or prompt recipe: rebuild every neighbour list once.
-		if _, err := ix.DB.Exec(`DELETE FROM neighbors`); err != nil {
-			return st, err
-		}
-		rows, err := ix.DB.Query(`SELECT id FROM units WHERE active=1`)
-		if err != nil {
-			return st, err
-		}
-		dirty = dirty[:0]
-		for rows.Next() {
-			var id int64
-			rows.Scan(&id)
-			dirty = append(dirty, id)
-		}
-		rows.Close()
-		removed = nil
-	}
-	if err := ix.UpdateNeighbors(dirty, removed); err != nil {
-		return st, err
-	}
-	phase("neighbors")
-	st.Elapsed = time.Since(t0)
-	return st, nil
+	return ix.queueNeighbors(dirty, removed)
 }
 
 // OnBackfill, when set, hears every anchor backfill (units, time taken):

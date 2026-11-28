@@ -39,6 +39,12 @@ type Options struct {
 	ScopeFor       func(store.Unit) (string, bool)
 	Kinds          []string // empty = all
 	DocumentQuery  bool     // dedupe compares a proposed document to indexed documents
+	// Embedded marks the query as embedded by the caller, before it took
+	// the write turn (t0qap9): Search then never calls the embedder, and
+	// QueryVector (nil when that embed failed) is the query's vector,
+	// embedded as a document under the current pipeline.
+	Embedded    bool
+	QueryVector []float32
 	// BM25Scale > 0 scores full-text matches with FTS5 BM25 (title weighted
 	// 2, body and tags 1), multiplied by this scale, instead of flat points
 	// per word (title +2, body +1). BM25 weighs rare words (ticket ids,
@@ -268,7 +274,18 @@ func (s *Searcher) Search(ctx context.Context, query string, o Options) ([]Resul
 	// 5c. semantic similarity.
 	sem := map[int64]float64{}
 	semOn := false
-	if s.Embedder != nil && strings.TrimSpace(query) != "" &&
+	if o.Embedded {
+		if o.QueryVector != nil && s.Embedder != nil && strings.TrimSpace(query) != "" &&
+			s.DB.GetMeta("pipeline_hash") == index.PipelineHash(s.Embedder.Model()) {
+			semOn = true
+			if err := s.semantic(ctx, o.QueryVector, o, sem); err != nil {
+				return nil, err
+			}
+			for id := range sem {
+				get(id)
+			}
+		}
+	} else if s.Embedder != nil && strings.TrimSpace(query) != "" &&
 		(!o.DocumentQuery || s.DB.GetMeta("pipeline_hash") == index.PipelineHash(s.Embedder.Model())) {
 		// Embed the query the way the active pipeline's documents were
 		// embedded (mid-migration that may be the previous prompt recipe).

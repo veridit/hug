@@ -3,6 +3,7 @@ package app
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github.com/veridit/hug/internal/env"
 	"os"
@@ -21,10 +22,7 @@ import (
 
 // App is an opened muninn instance.
 type App struct {
-	sourceMu sync.Mutex
-	// reindexMu keeps one incremental pass at a time in this process (the MCP
-	// server's background startup pass and a write tool's pass).
-	reindexMu   sync.Mutex
+	sourceMu    sync.Mutex
 	sourceRoots map[string]sourceBoundary
 	Cfg         config.Config
 	DB          *store.DB
@@ -157,42 +155,46 @@ func (a *App) IndexOptions() index.Options {
 	return o
 }
 
-// Reindex runs one incremental pass.
-// It waits for the write turn (see store.WriteTurn) unless ctx already
-// carries it; a NoWait (hook) pass skips instead of queueing. Lock order:
-// write turn, then reindexMu, then the native store lock.
+// Reindex runs one incremental pass as short write steps (index.Indexer.Run,
+// t0qap9): each step takes the write turn for its writes only, and the
+// embedder runs holding no lock, so a remember, forget or capture waits
+// seconds, not a pass. A NoWait (hook) pass skips instead of queueing.
+// Called with ctx carrying the turn (a write flow indexing what it wrote),
+// it embeds nothing under the turn: the turn's release does that
+// (WriteTurn). Lock order: index pass lock, write turn, index step mutex,
+// the native store lock.
 func (a *App) Reindex(ctx context.Context) (index.Stats, error) {
-	var release func()
-	if a.Indexer.NoWait {
-		var ok bool
-		var err error
-		ctx, release, ok, err = a.DB.TryWriteTurn(ctx)
-		if err != nil {
-			return index.Stats{}, fmt.Errorf("index: %w", err)
-		}
-		if !ok {
-			return index.Stats{}, index.ErrBusy
-		}
-	} else {
-		var err error
-		ctx, release, err = a.DB.WriteTurn(ctx)
-		if err != nil {
-			return index.Stats{}, fmt.Errorf("index: %w", err)
-		}
-	}
-	defer release()
-	a.reindexMu.Lock()
-	defer a.reindexMu.Unlock()
 	st, err := a.Indexer.Run(ctx, a.IndexOptions())
 	if err != nil {
+		if errors.Is(err, index.ErrBusy) {
+			return st, err
+		}
 		return st, fmt.Errorf("index: %w", err)
 	}
 	return st, nil
 }
 
-// WriteTurn waits for this database's write turn; see store.WriteTurn.
+// WriteTurn waits for this database's write turn; see store.WriteTurn. Its
+// release first lets the turn go, then does the index work a pass under
+// the turn left (index.Indexer.Finish: embedding and the neighbour lists
+// the new vectors change), so that work never holds the turn.
 func (a *App) WriteTurn(ctx context.Context) (context.Context, func(), error) {
-	return a.DB.WriteTurn(ctx)
+	if a.DB.HasTurn(ctx) {
+		return ctx, func() {}, nil
+	}
+	turnCtx, release, err := a.DB.WriteTurn(ctx)
+	if err != nil {
+		return turnCtx, release, err
+	}
+	var once sync.Once
+	return turnCtx, func() {
+		once.Do(func() {
+			release()
+			if a.Indexer != nil && a.Indexer.Owed() {
+				a.Indexer.Finish(context.WithoutCancel(ctx))
+			}
+		})
+	}, nil
 }
 
 // RecallOptions are the automatic-recall search settings.

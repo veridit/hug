@@ -6,6 +6,8 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/veridit/hug/muninn/internal/anchor"
@@ -61,9 +63,14 @@ type Indexer struct {
 	// process's write transaction (hooks).
 	NoWait bool
 
-	deltas           []UnitDelta // concept-set changes collected during a pass
-	pipelineSwitched bool        // this pass completed a new embedding pipeline
-	embeddedHashes   []string    // vectors materialized during this pass
+	deltas []UnitDelta // concept-set changes collected during a write step
+	// mu is the step mutex: the one pooled connection carries one write
+	// transaction, and a write step's per-pass state (deltas, the graph
+	// move receipt) is touched under it.
+	mu sync.Mutex
+	// owed is set when a pass under a held write turn left embedding and
+	// neighbour work for Finish (t0qap9).
+	owed atomic.Bool
 
 	// Passes counts full index passes (Run) on this Indexer, so tests can
 	// prove a command did none (4vd1mz).
@@ -343,73 +350,4 @@ func (ix *Indexer) indexFile(path, kind string, st *Stats, parse func() ([]Candi
 		return nil, nil, err
 	}
 	return dirty, removed, ix.DB.SetSourceStat(id, mtime, size)
-}
-
-// EmbedDirty embeds units that lack a vector under the current pipeline.
-// Identical text across units shares one vector (content-addressed).
-func (ix *Indexer) EmbedDirty(ctx context.Context, st *Stats) error {
-	ix.embeddedHashes = nil
-	if ix.Embedder == nil {
-		return nil
-	}
-	pipeline := PipelineHash(ix.Embedder.Model())
-	rows, err := ix.DB.Query(`SELECT DISTINCT u.content_hash, u.title, u.body FROM units u
-	  LEFT JOIN embeddings e ON e.content_hash=u.content_hash AND e.pipeline_hash=?
-	  WHERE e.content_hash IS NULL`, pipeline)
-	if err != nil {
-		return err
-	}
-	type job struct{ hash, text string }
-	var jobs []job
-	for rows.Next() {
-		var h, t, b string
-		if err := rows.Scan(&h, &t, &b); err != nil {
-			rows.Close()
-			return err
-		}
-		jobs = append(jobs, job{h, EmbeddingText(t, b)})
-	}
-	rows.Close()
-	var total int
-	ix.DB.QueryRow(`SELECT COUNT(DISTINCT content_hash) FROM units`).Scan(&total)
-	st.EmbedReused = total - len(jobs)
-	// A hook must answer in milliseconds: it embeds at most MaxEmbed texts and
-	// leaves the rest (e.g. a full re-embed after a model change) to
-	// `hug mem index` or `hug mem serve`. Search keeps using the previous
-	// pipeline until every vector of the new one exists.
-	pending := len(jobs)
-	if ix.MaxEmbed > 0 && len(jobs) > ix.MaxEmbed {
-		jobs = jobs[:ix.MaxEmbed]
-	}
-	for start := 0; start < len(jobs); start += embed.BatchSize {
-		end := min(start+embed.BatchSize, len(jobs))
-		texts := make([]string, 0, end-start)
-		for _, j := range jobs[start:end] {
-			texts = append(texts, j.text)
-		}
-		vecs, err := ix.Embedder.Embed(ctx, embed.Documents(ix.Embedder, texts))
-		if err != nil {
-			st.EmbedErr = err
-			return nil // degrade to keyword-only; never fail indexing
-		}
-		for i, v := range vecs {
-			if err := ix.DB.PutEmbedding(jobs[start+i].hash, pipeline, len(v),
-				embed.EncodeF32(v), embed.Quantize(v), embed.Sketch(v)); err != nil {
-				return err
-			}
-			st.Embedded++
-			ix.embeddedHashes = append(ix.embeddedHashes, jobs[start+i].hash)
-		}
-	}
-	if st.Embedded < pending {
-		st.EmbedPending = pending - st.Embedded
-		return nil
-	}
-	if ix.DB.GetMeta("pipeline_hash") != pipeline {
-		ix.pipelineSwitched = true // every stored similarity is stale
-	}
-	if err := ix.DB.SetMeta("pipeline_query_prefix", embed.PromptsFor(ix.Embedder.Model()).Query); err != nil {
-		return err
-	}
-	return ix.DB.SetMeta("pipeline_hash", pipeline)
 }

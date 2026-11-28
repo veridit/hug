@@ -187,16 +187,14 @@ func (a *App) Origin(u store.Unit) (Origin, error) {
 }
 
 // applyNative updates the index for one forget's write to the native store
-// at path (index.Indexer.ApplyNative), under the write turn and the same
-// in-process lock as Reindex.
+// at path (index.Indexer.ApplyNative), under the write turn and the
+// index step mutex as Reindex's steps.
 func (a *App) applyNative(ctx context.Context, path string, f ingest.Forgotten) error {
-	ctx, release, err := a.DB.WriteTurn(ctx)
+	ctx, release, err := a.WriteTurn(ctx)
 	if err != nil {
 		return fmt.Errorf("index: %w", err)
 	}
 	defer release()
-	a.reindexMu.Lock()
-	defer a.reindexMu.Unlock()
 	return a.Indexer.ApplyNative(ctx, path, f.Before, f.After, f.Changed)
 }
 
