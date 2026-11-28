@@ -86,6 +86,7 @@ Test patterns to reuse: index/busy_test.go, knn_test.go (bruteNeighbors, neighbo
 Checks 1 and 2 are not ticked.
 dolphin: reading done, baseline binary bin/hug-main built from b5e4450c; writing the check-7 golden against unchanged code next, then the split of Run (lock-free compute, short turn+tx write batches, persistent pending set for crash-safe resume).
 dolphin: check-7 golden committed (8cc05bc9, worktree branch t0qap9, 60/60 stable runs on unchanged code). Now: splitting Run into lock-free compute plus short turn+tx write steps, with a persistent pending set (index_pending, index_deltas) so an interrupted pass resumes.
+dolphin: still on it. Design settled after reading (no production code yet): pass lock (in-process mutex + flock) taken before the turn; sources, communities, embed and neighbours each compute outside both locks and write in short turn+tx batches that re-check file stat / an index generation and redo on change; pending dirty units and concept deltas persist in tables so an interrupted pass resumes; remember indexes only its own memories.
 ## History
 - 2026-11-26T01:59 todo -> doing/active (take)
 - 2026-11-26T09:17 doing/active -> todo/ready (give back; was assignee: hedgehog); was doing_since: 2026-11-26T01:59
