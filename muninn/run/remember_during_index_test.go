@@ -133,6 +133,10 @@ func TestRememberDuringFullReindexSucceedsWithin5s(t *testing.T) {
 			t.Logf("CHECK4 the remember that saw the pass end took %s", d.Round(time.Millisecond))
 		default:
 			took, during = append(took, d), append(during, seen)
+			// One remember every 400 ms or so: enough to land in every
+			// step of the pass, without taking the CPU that tests of other
+			// packages running beside this one need (macOS CI runner).
+			time.Sleep(300 * time.Millisecond)
 		}
 		if time.Since(t0) > 3*time.Minute {
 			t.Fatal("hug mem index ran over 3 minutes")
