@@ -37,7 +37,7 @@ Findings to fix (hedgehog note above): (1) App.Reindex holds the write turn for 
 - [ ] ~~A memory write from another process during a full reindex succeeds within 5 s (test)~~ (not relevant: replaced by check 4, crab, 2026-11-26)
 - [ ] On a store copy, a full reindex never holds the SQLite write lock or the write turn longer than 5 s at a time (lockprobe, numbers noted)
 - [ ] A remember from another process during a full reindex succeeds within 5 s (test)
-- [ ] No embed call runs inside a write transaction or under the write turn (test)
+- [x] No embed call runs inside a write transaction or under the write turn (test)
 - [ ] A remember no longer runs a full reindex; it indexes only what it wrote (test)
 - [ ] Neighbour lists and topic groups after a reindex equal today's on the same store (test)
 
@@ -93,6 +93,7 @@ dolphin DESIGN (a successor continues from here):
 3. Locks: a pass started without the turn takes a pass lock first (process mutex + flock <db>.index.lock; NoWait: try, else ErrBusy), then per step turn -> Indexer.mu (replaces App.reindexMu) -> tx. A pass under a held turn (tidy, correction, forget fallback) skips the pass lock and does no embedding; it marks the embed owed, and App.WriteTurn's release pays it after the turn is dropped.
 4. Remember: embed its text once before the turn (the same document text serves the dedupe search as a pre-embedded query and the new unit's vector), then a targeted ApplyNative-style update of what it wrote; a full pass only on ErrNotCurrent.
 5. Order: (1) embed out of tx and turn [check 5], (2) targeted remember [6], (3) short sources/neighbour steps [3,4]; golden byte-identical at each commit.
+check 5: evidence: TestNoEmbedUnderWriteLocks (muninn/internal/app/embed_locks_test.go, commit 407af658): a probe embedder tries the write-turn flock and a no-wait BEGIN IMMEDIATE on a second connection at every call, across a full pass, a remember, a reinforcing remember, a forget and a pass under a held turn (FreshFor). cmd: GOMAXPROCS=2 nice -n 19 go test -count=1 -run TestNoEmbedUnderWriteLocks -v ./internal/app/ -> 'CHECK5 embed calls=5 under_tx=0 under_turn=0' '--- PASS: TestNoEmbedUnderWriteLocks (0.10s)'. Probe self-test TestLockProbeSeesBothLocks PASS. Mutants: Finish before turn release -> 'CHECK5 embed calls=5 under_tx=0 under_turn=2' FAIL; dedupe embed back under turn -> 'under_turn=1' FAIL. Golden TestReindexMatchesGolden PASS x3 unchanged.
 ## History
 - 2026-11-26T01:59 todo -> doing/active (take)
 - 2026-11-26T09:17 doing/active -> todo/ready (give back; was assignee: hedgehog); was doing_since: 2026-11-26T01:59
