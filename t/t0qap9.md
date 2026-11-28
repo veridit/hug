@@ -85,6 +85,7 @@ STATE OF THE DESIGN WHEN STOPPED (not started in code): per-stage bounded commit
 Test patterns to reuse: index/busy_test.go, knn_test.go (bruteNeighbors, neighborChurn), partial_neighbors_test.go, run/concurrent_writes_test.go (runCLI), testutil.FakeEmbedder; speed tests must call timing.Budget(t) (internal/repocheck/timing_test.go).
 Checks 1 and 2 are not ticked.
 dolphin: reading done, baseline binary bin/hug-main built from b5e4450c; writing the check-7 golden against unchanged code next, then the split of Run (lock-free compute, short turn+tx write batches, persistent pending set for crash-safe resume).
+dolphin: check-7 golden committed (8cc05bc9, worktree branch t0qap9, 60/60 stable runs on unchanged code). Now: splitting Run into lock-free compute plus short turn+tx write steps, with a persistent pending set (index_pending, index_deltas) so an interrupted pass resumes.
 ## History
 - 2026-11-26T01:59 todo -> doing/active (take)
 - 2026-11-26T09:17 doing/active -> todo/ready (give back; was assignee: hedgehog); was doing_since: 2026-11-26T01:59
