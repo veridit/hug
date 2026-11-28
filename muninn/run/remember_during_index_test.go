@@ -124,6 +124,7 @@ func TestRememberDuringFullReindexSucceedsWithin5s(t *testing.T) {
 				t.Fatalf("hug mem index: %v: %s", err, idxOut.String())
 			}
 			running = false
+			t.Logf("CHECK4 the remember that saw the pass end took %s", d.Round(time.Millisecond))
 		default:
 			took, during = append(took, d), append(during, seen)
 		}

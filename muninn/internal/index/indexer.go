@@ -431,6 +431,10 @@ func (ix *Indexer) IndexMarkdown(ctx context.Context, files []string, st *Stats)
 	return dirtyAll, removedAll, nil
 }
 
+// afterPlan, when set (tests), runs after a source file's changes are
+// planned and before any is written: another writer's moment.
+var afterPlan func(path string)
+
 // passKey marks a pass's context: only a pass's source writes queue index
 // work. IndexJcode, IndexNative and IndexMarkdown called directly write
 // units only, as they always did.
@@ -472,6 +476,9 @@ func (ix *Indexer) indexFile(ctx context.Context, path, kind string, st *Stats, 
 		return nil, nil, err
 	}
 	ws := plan(existing, cands, st)
+	if afterPlan != nil {
+		afterPlan(path)
+	}
 	if ctx.Value(passKey{}) == nil {
 		for i := range ws {
 			ws[i].noQueue = true

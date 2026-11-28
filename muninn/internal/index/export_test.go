@@ -72,3 +72,7 @@ type LegacyGraph = legacyGraph
 
 // PackAdj and UnpackAdj are the adjacency codec.
 var PackAdj, UnpackAdj = packAdj, unpackAdj
+
+// AfterPlan sets the hook that runs between a source file's plan and its
+// writes (nil clears it).
+func AfterPlan(f func(path string)) { afterPlan = f }
