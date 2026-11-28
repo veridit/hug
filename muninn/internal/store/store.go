@@ -214,6 +214,12 @@ CREATE INDEX IF NOT EXISTS neighbors_nbr ON neighbors(nbr_id);
 -- consumed by the pass's neighbour step, so a pass cut off between its
 -- short steps is finished by the next one.
 CREATE TABLE IF NOT EXISTS index_pending (seq INTEGER PRIMARY KEY, unit_id INTEGER NOT NULL, removed INTEGER NOT NULL);
+-- Concept-set changes written but not yet in the concept graph (t0qap9):
+-- one row per unit change, old and new concept ids (comma-separated,
+-- sorted). The index's communities step applies them in seq order as one
+-- DF-Louvain update, the same update a one-transaction pass made, and
+-- deletes them in the step that saves the graph.
+CREATE TABLE IF NOT EXISTS index_deltas (seq INTEGER PRIMARY KEY, unit_id INTEGER NOT NULL, old TEXT NOT NULL, new TEXT NOT NULL);
 -- Concept graph (seid search): unigram concepts, unit membership, communities.
 CREATE TABLE IF NOT EXISTS concepts (id INTEGER PRIMARY KEY, term TEXT NOT NULL UNIQUE);
 CREATE TABLE IF NOT EXISTS unit_concepts (

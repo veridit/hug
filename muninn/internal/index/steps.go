@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/veridit/hug/internal/flock"
 	"github.com/veridit/hug/muninn/internal/embed"
@@ -50,6 +51,19 @@ func (ix *Indexer) passLock(noWait bool) (release func(), ok bool, err error) {
 		return nil, false, err
 	}
 	return func() { unlock(); mu.Unlock() }, true, nil
+}
+
+// passRunning reports whether a pass holds the pass lock now, in this
+// process or another. It only tries the lock, so it may run under the turn.
+func (ix *Indexer) passRunning() bool {
+	release, ok, err := ix.passLock(true)
+	if err != nil {
+		return false
+	}
+	if ok {
+		release()
+	}
+	return !ok
 }
 
 // step runs f as one write step: the write turn (unless ctx carries it),
@@ -104,32 +118,181 @@ func (ix *Indexer) step(ctx context.Context, f func() error) error {
 	return nil
 }
 
-// queueNeighbors records neighbour work in index_pending, in order, inside
-// the caller's step: dirty lists are recomputed, removed units detached.
-func (ix *Indexer) queueNeighbors(dirty, removed []int64) error {
-	for flag, ids := range [][]int64{dirty, removed} {
-		for start := 0; start < len(ids); start += 300 {
-			chunk := ids[start:min(start+300, len(ids))]
-			var sb strings.Builder
-			args := make([]any, 0, 2*len(chunk))
-			sb.WriteString(`INSERT INTO index_pending(unit_id, removed) VALUES `)
-			for i, id := range chunk {
-				if i > 0 {
-					sb.WriteByte(',')
+// stepBudget bounds one write step of a batched write: a step stops taking
+// items once it has run this long, commits, and lets the turn go, so a
+// memory write from another process gets in between (t0qap9 check 4).
+var stepBudget = 250 * time.Millisecond
+
+// stepGap is how long a batched write waits between two of its steps
+// without the turn, so a writer blocked on the turn is woken and takes it
+// before the next step asks again: flock does not queue its waiters.
+var stepGap = 5 * time.Millisecond
+
+// batches runs each(0..n-1) in as few write steps as stepBudget allows and
+// last, when set, in the step that runs the final item (or alone, n = 0).
+// A step that fails rolls back its own items only: the caller's queued work
+// and unrecorded stats make the next pass redo the rest.
+func (ix *Indexer) batches(ctx context.Context, n int, each func(i int) error, last func() error) error {
+	i := 0
+	for {
+		done := false
+		if err := ix.step(ctx, func() error {
+			t := time.Now()
+			for i < n {
+				if err := each(i); err != nil {
+					return err
 				}
-				sb.WriteString("(?,?)")
-				args = append(args, id, flag)
+				i++
+				if i < n && time.Since(t) > stepBudget {
+					return nil
+				}
 			}
-			if _, err := ix.DB.Exec(sb.String(), args...); err != nil {
-				return err
+			done = true
+			if last != nil {
+				return last()
 			}
+			return nil
+		}); err != nil {
+			return err
+		}
+		if done {
+			return nil
+		}
+		if !ix.DB.HasTurn(ctx) {
+			time.Sleep(stepGap)
 		}
 	}
-	return nil
 }
 
-// neighborStep does the queued neighbour work and clears what it did.
-func (ix *Indexer) neighborStep() error {
+// queueDelta records a unit's concept-set change for the communities step,
+// inside the caller's step.
+func (ix *Indexer) queueDelta(unitID int64, old, new []int) error {
+	// An empty delta changes no edge, but its unit's community counts are
+	// refreshed with the rest, as a one-transaction pass did.
+	_, err := ix.DB.Exec(`INSERT INTO index_deltas(unit_id, old, new) VALUES(?,?,?)`, unitID, joinIDs(old), joinIDs(new))
+	return err
+}
+
+// queueList records that a unit's neighbour list is recomputed (removed:
+// the unit is gone and its edges are detached), inside the caller's step.
+func (ix *Indexer) queueList(unitID int64, removed bool) error {
+	r := 0
+	if removed {
+		r = 1
+	}
+	_, err := ix.DB.Exec(`INSERT INTO index_pending(unit_id, removed) VALUES(?,?)`, unitID, r)
+	return err
+}
+
+func joinIDs(ids []int) string {
+	var sb strings.Builder
+	for i, id := range ids {
+		if i > 0 {
+			sb.WriteByte(',')
+		}
+		sb.WriteString(strconv.Itoa(id))
+	}
+	return sb.String()
+}
+
+func splitIDs(s string) []int {
+	if s == "" {
+		return nil
+	}
+	parts := strings.Split(s, ",")
+	out := make([]int, 0, len(parts))
+	for _, p := range parts {
+		n, _ := strconv.Atoi(p)
+		out = append(out, n)
+	}
+	return out
+}
+
+// deltasPending reports queued concept-set changes (a read, no lock).
+func (ix *Indexer) deltasPending() bool {
+	var one int
+	return ix.DB.QueryRow(`SELECT 1 FROM index_deltas LIMIT 1`).Scan(&one) == nil
+}
+
+// communityStep applies the queued concept deltas to the concept graph as
+// one DF-Louvain update, the update a one-transaction pass made: read and
+// computed with no lock, then saved in one short step that also clears the
+// deltas it applied. It reports whether there were any.
+//
+// Only this step writes the graph, under the pass lock, so nothing of this
+// hug's changes it between the read and the save. A hug from before
+// t0qap9 still updates the graph itself; when meta graph_m (the graph's
+// total weight, which every update rewrites) changed meanwhile, the update
+// is redone inside the step from the graph as it is then. Edge weights are
+// sums of unit deltas, so applying ours after its own leaves them right.
+func (ix *Indexer) communityStep(ctx context.Context) (bool, error) {
+	rows, err := ix.DB.Query(`SELECT seq, unit_id, old, new FROM index_deltas ORDER BY seq`)
+	if err != nil {
+		return false, err
+	}
+	var deltas []UnitDelta
+	units := map[int64]bool{}
+	var last int64 = -1
+	for rows.Next() {
+		var seq, id int64
+		var old, new string
+		if err := rows.Scan(&seq, &id, &old, &new); err != nil {
+			rows.Close()
+			return false, err
+		}
+		deltas = append(deltas, UnitDelta{Old: splitIDs(old), New: splitIDs(new)})
+		units[id] = true
+		last = seq
+	}
+	rows.Close()
+	if err := rows.Err(); err != nil {
+		return false, err
+	}
+	if last < 0 {
+		return false, nil
+	}
+	if ix.GraphNeedsMove() {
+		if _, err := ix.MoveGraph(); err != nil {
+			return true, err
+		}
+	}
+	m0 := ix.DB.GetMeta("graph_m")
+	g, err := ix.loadGraph()
+	if err != nil {
+		return true, err
+	}
+	g.Update(deltas)
+	if g.err != nil {
+		return true, g.err
+	}
+	loads := g.Loads
+	err = ix.step(ctx, func() error {
+		if ix.DB.GetMeta("graph_m") != m0 {
+			g2, err := ix.loadGraph()
+			if err != nil {
+				return err
+			}
+			g2.Update(deltas)
+			g, loads = g2, loads+g2.Loads
+		}
+		if err := ix.saveGraph(g, units); err != nil {
+			return err
+		}
+		_, err := ix.DB.Exec(`DELETE FROM index_deltas WHERE seq<=?`, last)
+		return err
+	})
+	if err == nil {
+		ix.mu.Lock()
+		ix.GraphLoads += loads
+		ix.mu.Unlock()
+	}
+	return true, err
+}
+
+// neighborStep does the queued neighbour work: the lists are computed with
+// no lock (planNeighbors), then written in short steps; the last one
+// clears the work it did.
+func (ix *Indexer) neighborStep(ctx context.Context) error {
 	rows, err := ix.DB.Query(`SELECT seq, unit_id, removed FROM index_pending ORDER BY seq`)
 	if err != nil {
 		return err
@@ -157,11 +320,14 @@ func (ix *Indexer) neighborStep() error {
 	if last < 0 {
 		return nil
 	}
-	if err := ix.UpdateNeighbors(dirty, removed); err != nil {
+	lists, err := ix.planNeighbors(dirty, removed)
+	if err != nil {
 		return err
 	}
-	_, err = ix.DB.Exec(`DELETE FROM index_pending WHERE seq<=?`, last)
-	return err
+	return ix.writeLists(ctx, lists, func() error {
+		_, err := ix.DB.Exec(`DELETE FROM index_pending WHERE seq<=?`, last)
+		return err
+	})
 }
 
 // neighborsPending reports queued neighbour work (a read, no lock).
@@ -169,6 +335,9 @@ func (ix *Indexer) neighborsPending() bool {
 	var one int
 	return ix.DB.QueryRow(`SELECT 1 FROM index_pending LIMIT 1`).Scan(&one) == nil
 }
+
+// workPending reports queued community or neighbour work.
+func (ix *Indexer) workPending() bool { return ix.deltasPending() || ix.neighborsPending() }
 
 // embedJob is one text to embed and the content hash its vector is stored under.
 type embedJob struct{ hash, text string }
