@@ -35,6 +35,12 @@ func TestRememberDuringFullReindexSucceedsWithin5s(t *testing.T) {
 	if testing.Short() {
 		t.Skip("spawns 2 processes and a multi-second index pass")
 	}
+	if raceEnabled {
+		// The race detector makes each child hug ~2 s to start and run
+		// (measured: 1.85-3.3 s per remember, load 30): the 5 s budget then
+		// measures the detector. The plain test jobs (macOS, Windows) judge it.
+		t.Skip("wall-clock budget: judged without -race")
+	}
 	timing.Budget(t)
 	home := memHome(t)
 	t.Setenv("HUG_NO_EMBED", "")
