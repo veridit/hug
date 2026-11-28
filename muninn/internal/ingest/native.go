@@ -266,72 +266,84 @@ type Remembering struct {
 // RememberWith stores r, or reinforces an active memory with the same text,
 // category and scope. Reinforcing keeps the first branch it was seen on.
 func RememberWith(path string, r Remembering) (NativeMemory, bool, error) {
+	m, reinforced, _, err := RememberWritten(path, r)
+	return m, reinforced, err
+}
+
+// RememberWritten is RememberWith, reporting what the write changed.
+func RememberWritten(path string, r Remembering) (NativeMemory, bool, Written, error) {
 	content, category, typ, scope, tags, safeReason := r.Content, r.Category, r.Type, r.Scope, r.Tags, r.SafeReason
 	content = strings.TrimSpace(content)
 	if content == "" {
-		return NativeMemory{}, false, errors.New("empty memory")
+		return NativeMemory{}, false, Written{}, errors.New("empty memory")
 	}
 	tr, err := trigger.Canonical(r.Trigger)
 	if err != nil {
-		return NativeMemory{}, false, err
+		return NativeMemory{}, false, Written{}, err
 	}
 	if scope == "" {
 		scope = "global"
 	}
-	unlock, err := LockNative(path)
-	if err != nil {
-		return NativeMemory{}, false, err
-	}
-	defer unlock()
-	mems, err := LoadNative(path)
-	if err != nil {
-		return NativeMemory{}, false, err
-	}
-	now := time.Now().UTC()
-	for i := range mems {
-		m := &mems[i]
-		if m.Active && m.Content == content && m.Category == category && m.Scope == scope {
-			// A different trigger is a correction, not the same memory again
-			// (jrj1vq, crab): refused, nothing written. None keeps the old;
-			// a memory without one (plain, or cleared) takes the new one.
-			if tr != nil && !trigger.Empty(m.Trigger) && !trigger.Equal(tr, m.Trigger) {
-				return *m, false, &TriggerChangeError{ID: m.ID, SID: m.SID, Old: m.Trigger, New: tr}
-			}
-			if tr != nil && trigger.Empty(m.Trigger) {
-				m.Trigger = tr
-			}
-			if safeReason != "" {
-				m.SafeReason = safeReason
-			}
-			if m.Type == "" {
-				m.Type = typ
-			}
-			if m.Branch == "" {
-				m.Branch = r.Branch
-				if m.Repo == "" && m.Branch != "" {
-					m.Repo = r.Repo
+	var got NativeMemory
+	reinforced := false
+	w, err := UpdateNativeChanged(path, func(mems []NativeMemory) ([]NativeMemory, bool, error) {
+		now := time.Now().UTC()
+		for i := range mems {
+			m := &mems[i]
+			if m.Active && m.Content == content && m.Category == category && m.Scope == scope {
+				// A different trigger is a correction, not the same memory again
+				// (jrj1vq, crab): refused, nothing written. None keeps the old;
+				// a memory without one (plain, or cleared) takes the new one.
+				if tr != nil && !trigger.Empty(m.Trigger) && !trigger.Equal(tr, m.Trigger) {
+					got = *m
+					return mems, false, &TriggerChangeError{ID: m.ID, SID: m.SID, Old: m.Trigger, New: tr}
 				}
+				if tr != nil && trigger.Empty(m.Trigger) {
+					m.Trigger = tr
+				}
+				if safeReason != "" {
+					m.SafeReason = safeReason
+				}
+				if m.Type == "" {
+					m.Type = typ
+				}
+				if m.Branch == "" {
+					m.Branch = r.Branch
+					if m.Repo == "" && m.Branch != "" {
+						m.Repo = r.Repo
+					}
+				}
+				// Reinforcing never changes a memory's condition: one that held
+				// without one keeps holding, one with a condition keeps it.
+				m.Strength++
+				m.Updated = now
+				got, reinforced = *m, true
+				return mems, true, nil
 			}
-			// Reinforcing never changes a memory's condition: one that held
-			// without one keeps holding, one with a condition keeps it.
-			m.Strength++
-			m.Updated = now
-			return *m, true, SaveNative(path, mems)
+		}
+		m := NativeMemory{ID: newID(), Content: content, Category: category, Type: typ, Tags: tags, Scope: scope,
+			Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason),
+			NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch), Holds: strings.TrimSpace(r.Holds), Trigger: tr}
+		if m.Branch != "" || m.Holds != "" {
+			m.Repo = strings.TrimSpace(r.Repo)
+		}
+		if r.OriginFor != nil {
+			m.Origin = r.OriginFor(m.ID)
+		}
+		mems = append(mems, m)
+		assignNativeSIDs(mems)
+		got = mems[len(mems)-1]
+		return mems, true, nil
+	})
+	if err == nil {
+		// The saved row: SaveNative's ids are final.
+		for _, m := range w.Changed {
+			if m.ID == got.ID {
+				got = m
+			}
 		}
 	}
-	m := NativeMemory{ID: newID(), Content: content, Category: category, Type: typ, Tags: tags, Scope: scope,
-		Active: true, Strength: 1, Created: now, Updated: now, SafeReason: strings.TrimSpace(safeReason),
-		NewReason: strings.TrimSpace(r.NewReason), Branch: strings.TrimSpace(r.Branch), Holds: strings.TrimSpace(r.Holds), Trigger: tr}
-	if m.Branch != "" || m.Holds != "" {
-		m.Repo = strings.TrimSpace(r.Repo)
-	}
-	if r.OriginFor != nil {
-		m.Origin = r.OriginFor(m.ID)
-	}
-	mems = append(mems, m)
-	assignNativeSIDs(mems)
-	m = mems[len(mems)-1]
-	return m, false, SaveNative(path, mems)
+	return got, reinforced, w, err
 }
 
 // TriggerChangeError refuses a reinforce whose trigger differs from the
@@ -356,16 +368,22 @@ func (e *TriggerChangeError) Error() string {
 // (jrj1vq). tr nil or empty stores None, a deliberate clear that sync
 // carries to other clones. It reports whether the memory was found.
 func ReplaceTrigger(path, ref string, tr *trigger.Trigger) (NativeMemory, bool, error) {
+	m, found, _, err := ReplaceTriggerWritten(path, ref, tr)
+	return m, found, err
+}
+
+// ReplaceTriggerWritten is ReplaceTrigger, reporting what the write changed.
+func ReplaceTriggerWritten(path, ref string, tr *trigger.Trigger) (NativeMemory, bool, Written, error) {
 	stored, err := trigger.Stored(tr)
 	if err != nil {
-		return NativeMemory{}, false, err
+		return NativeMemory{}, false, Written{}, err
 	}
 	if stored == nil {
 		stored = trigger.None()
 	}
 	var got NativeMemory
 	found := false
-	err = UpdateNative(path, func(mems []NativeMemory) ([]NativeMemory, bool, error) {
+	w, err := UpdateNativeChanged(path, func(mems []NativeMemory) ([]NativeMemory, bool, error) {
 		for i := range mems {
 			m := &mems[i]
 			if !m.Active || (m.ID != ref && m.SID != ref) {
@@ -382,7 +400,7 @@ func ReplaceTrigger(path, ref string, tr *trigger.Trigger) (NativeMemory, bool, 
 		}
 		return mems, false, nil
 	})
-	return got, found, err
+	return got, found, w, err
 }
 
 // Forget deactivates a memory by id (kept on disk, excluded from recall).

@@ -180,7 +180,13 @@ func (b Binding) reinforceMemory(ctx context.Context, a *App, u store.Unit, scor
 	if err = batch.save(ctx, a); err != nil {
 		return store.Unit{}, false, err
 	}
-	if _, err = a.Reindex(ctx); err != nil {
+	// The index takes what the save changed (t0qap9); a memory from another
+	// source has no native write, and a full pass picks up its mirror.
+	if !batch.saved {
+		if _, err = a.Reindex(ctx); err != nil {
+			return store.Unit{}, false, err
+		}
+	} else if err = a.indexWritten(ctx, batch.written); err != nil {
 		return store.Unit{}, false, err
 	}
 	u, err = b.Resolve(a, u.SID)
@@ -215,4 +221,29 @@ func (a *App) embedForDedupe(ctx context.Context, content string) context.Contex
 		vec = vecs[0]
 	}
 	return context.WithValue(ctx, dedupeVecKey{}, dedupeVec{content, vec})
+}
+
+// indexWritten updates the index for one write to the native store and
+// nothing else (t0qap9 check 6): the units it changed, the concept graph's
+// delta, their neighbour lists, and their vectors from the text the caller
+// embedded before the write turn (embedForDedupe). A full pass runs only
+// when the index had not recorded the file the write started from
+// (index.ErrNotCurrent). ctx carries the write turn.
+func (a *App) indexWritten(ctx context.Context, w ingest.Written) error {
+	vecs := map[string][]float32{}
+	if v, ok := ctx.Value(dedupeVecKey{}).(dedupeVec); ok && v.vec != nil {
+		for _, m := range w.Changed {
+			if m.Title == "" && strings.TrimSpace(m.Content) == v.text {
+				vecs[index.ContentHash(index.EmbeddingText("", m.Content))] = v.vec
+			}
+		}
+	}
+	err := a.Indexer.ApplyWritten(ctx, NativePath(), w, vecs)
+	if errors.Is(err, index.ErrNotCurrent) {
+		_, err = a.Reindex(ctx)
+	}
+	if err != nil && !errors.Is(err, index.ErrBusy) {
+		return fmt.Errorf("index: %w", err)
+	}
+	return err
 }

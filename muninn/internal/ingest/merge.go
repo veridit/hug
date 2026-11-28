@@ -12,7 +12,13 @@ import (
 // written (changed, added, or removed). Use it for long operations such as
 // capture or tidy, which must not hold the write lock across model calls.
 func MergeSave(path string, base, edited []NativeMemory) error {
-	return UpdateNative(path, func(cur []NativeMemory) ([]NativeMemory, bool, error) {
+	_, err := MergeSaveChanged(path, base, edited)
+	return err
+}
+
+// MergeSaveChanged is MergeSave, reporting what the write changed.
+func MergeSaveChanged(path string, base, edited []NativeMemory) (Written, error) {
+	return UpdateNativeChanged(path, func(cur []NativeMemory) ([]NativeMemory, bool, error) {
 		return mergeEdits(cur, base, edited)
 	})
 }

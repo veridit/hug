@@ -120,66 +120,157 @@ var ErrNotCurrent = errors.New("index: source not current")
 //
 // The caller holds the write turn and no transaction.
 func (ix *Indexer) ApplyNative(ctx context.Context, path string, before, after ingest.FileStat, changed []ingest.NativeMemory) error {
-	moved := ""
+	return ix.applyWritten(ctx, path, ingest.Written{Before: before, After: after, Changed: changed}, nil, true)
+}
+
+// ApplyWritten is ApplyNative for any one write to the native store
+// (t0qap9): w.Changed may hold memories the write added, and w.Removed ids
+// it dropped. vecs holds document vectors the caller embedded before it took
+// the write turn, by content hash (ContentHash(EmbeddingText(title, body)));
+// they are stored with the units, as a pass would store them, so the
+// neighbour lists come out as a full pass makes them. A unit left without
+// a vector is embedded by Finish once the turn is dropped (Owed). A short
+// id the database had to extend on a collision is written back to the file
+// only by a full pass: ApplyWritten returns ErrNotCurrent then, changing
+// nothing.
+func (ix *Indexer) ApplyWritten(ctx context.Context, path string, w ingest.Written, vecs map[string][]float32) error {
+	if w.After == w.Before && len(w.Changed) == 0 && len(w.Removed) == 0 {
+		return nil // the write saved nothing
+	}
+	return ix.applyWritten(ctx, path, w, vecs, false)
+}
+
+func (ix *Indexer) applyWritten(ctx context.Context, path string, w ingest.Written, vecs map[string][]float32, known bool) error {
+	moved, missing := "", false
 	if err := ix.step(ctx, func() error {
 		ix.GraphMoved, ix.graphMovePending = "", ""
-		err := ix.applyNative(path, before, after, changed)
+		var err error
+		missing, err = ix.applyNative(path, w, vecs, known)
 		moved, ix.graphMovePending = ix.graphMovePending, ""
 		return err
 	}); err != nil {
 		return err
 	}
 	ix.publishGraphMove(moved)
+	if missing {
+		ix.owed.Store(true)
+	}
 	return nil
 }
 
-func (ix *Indexer) applyNative(path string, before, after ingest.FileStat, changed []ingest.NativeMemory) error {
+// applyNative does a targeted update inside the caller's step. known: every
+// changed memory must already be a unit (a forget changes only those). It
+// reports whether a unit it wrote still lacks a vector.
+func (ix *Indexer) applyNative(path string, w ingest.Written, vecs map[string][]float32, known bool) (bool, error) {
 	if ix.DB.GetMeta("source_recipe") != SourceRecipe {
-		return ErrNotCurrent
+		return false, ErrNotCurrent
 	}
 	var id, mtime, size int64
 	if err := ix.DB.QueryRow(`SELECT id, mtime_ns, size FROM sources WHERE kind='native' AND path=?`, path).Scan(&id, &mtime, &size); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return ErrNotCurrent
+			return false, ErrNotCurrent
 		}
-		return err
+		return false, err
 	}
-	if mtime != before.Mtime || size != before.Size || before.Mtime < 0 {
-		return ErrNotCurrent
+	if mtime != w.Before.Mtime || size != w.Before.Size || w.Before.Mtime < 0 {
+		return false, ErrNotCurrent
 	}
 	ix.deltas = nil
 	var st Stats
-	var dirty []int64
-	for _, m := range changed {
+	var dirty, removed []int64
+	for _, m := range w.Changed {
 		var uid, ident string
+		had := true
 		err := ix.DB.QueryRow(`SELECT id, ident FROM units WHERE source_id=? AND key=?`, id, m.ID).Scan(&uid, &ident)
 		if errors.Is(err, sql.ErrNoRows) {
-			// The index never saw this memory although it recorded the
-			// file: not the state a targeted update assumes.
-			return ErrNotCurrent
+			if known {
+				// The index never saw this memory although it recorded the
+				// file: not the state a targeted forget assumes.
+				return false, ErrNotCurrent
+			}
+			had = false // the file at Before was indexed: new in this write
+		} else if err != nil {
+			return false, err
 		}
+		u, ok, err := ix.syncCandidate(id, nativeCandidate(m), [2]string{uid, ident}, had, &st)
 		if err != nil {
-			return err
-		}
-		u, ok, err := ix.syncCandidate(id, nativeCandidate(m), [2]string{uid, ident}, true, &st)
-		if err != nil {
-			return err
+			return false, err
 		}
 		if ok {
 			dirty = append(dirty, u)
+			var sid string
+			if err := ix.DB.QueryRow(`SELECT sid FROM units WHERE id=?`, u).Scan(&sid); err != nil {
+				return false, err
+			}
+			if sid != m.SID {
+				return false, ErrNotCurrent // a pass writes the extended id back
+			}
 		}
+	}
+	for _, key := range w.Removed {
+		var uid int64
+		err := ix.DB.QueryRow(`SELECT id FROM units WHERE source_id=? AND key=?`, id, key).Scan(&uid)
+		if errors.Is(err, sql.ErrNoRows) {
+			continue
+		}
+		if err != nil {
+			return false, err
+		}
+		oldConcepts, err := ix.unitConcepts(uid)
+		if err != nil {
+			return false, err
+		}
+		ix.deltas = append(ix.deltas, UnitDelta{Old: oldConcepts})
+		if err := ix.DB.DeleteUnit(uid); err != nil {
+			return false, err
+		}
+		removed = append(removed, uid)
 	}
 	if len(ix.deltas) > 0 {
 		if err := ix.applyDeltas(dirty); err != nil {
-			return err
+			return false, err
 		}
 	}
-	// No text changed, so nothing needs a vector; neighbours lose the
-	// forgotten units exactly as a pass would detach them.
-	if err := ix.UpdateNeighbors(dirty, nil); err != nil {
-		return err
+	missing, err := ix.putGiven(dirty, vecs)
+	if err != nil {
+		return false, err
 	}
-	return ix.DB.SetSourceStat(id, after.Mtime, after.Size)
+	if err := ix.UpdateNeighbors(dirty, removed); err != nil {
+		return false, err
+	}
+	return missing, ix.DB.SetSourceStat(id, w.After.Mtime, w.After.Size)
+}
+
+// putGiven stores the given vectors of dirty units that lack one under the
+// current pipeline, and reports whether an active one is still without.
+func (ix *Indexer) putGiven(dirty []int64, vecs map[string][]float32) (bool, error) {
+	if ix.Embedder == nil || len(dirty) == 0 {
+		return false, nil
+	}
+	pipeline := PipelineHash(ix.Embedder.Model())
+	if ix.DB.GetMeta("pipeline_hash") != pipeline {
+		return true, nil // a pipeline switch is a pass's work
+	}
+	missing := false
+	for _, u := range dirty {
+		var hash string
+		var active, have int
+		if err := ix.DB.QueryRow(`SELECT content_hash, active, EXISTS(SELECT 1 FROM embeddings e WHERE e.content_hash=units.content_hash AND e.pipeline_hash=?) FROM units WHERE id=?`, pipeline, u).Scan(&hash, &active, &have); err != nil {
+			return false, err
+		}
+		if have == 1 {
+			continue
+		}
+		v, ok := vecs[hash]
+		if !ok || v == nil {
+			missing = missing || active == 1
+			continue
+		}
+		if err := ix.DB.PutEmbedding(hash, pipeline, len(v), embed.EncodeF32(v), embed.Quantize(v), embed.Sketch(v)); err != nil {
+			return false, err
+		}
+	}
+	return missing, nil
 }
 
 // JcodeSource is one jcode instance's memory directory and its scope prefix.

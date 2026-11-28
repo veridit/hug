@@ -1,6 +1,10 @@
 package ingest
 
 import (
+	"errors"
+	"os"
+	"reflect"
+	"sort"
 	"sync"
 
 	"github.com/veridit/hug/internal/flock"
@@ -62,18 +66,71 @@ func (l *NativeLock) Release() {
 // UpdateNative loads the store, lets change edit it, and saves the result, all
 // under the write lock. change returns save=false to leave the file untouched.
 func UpdateNative(path string, change func(mems []NativeMemory) ([]NativeMemory, bool, error)) error {
+	_, err := UpdateNativeChanged(path, change)
+	return err
+}
+
+// Written is what one write did to the store file, for an index that
+// updates only that (t0qap9): Before and After are the file's stat just
+// before the load and just after the save, both under the lock, so an index
+// that recorded Before differs from the file at After by exactly Changed
+// (new or edited memories, as saved) and Removed (ids gone from the file).
+// A write that saved nothing has After == Before and nothing changed.
+type Written struct {
+	Before, After FileStat
+	Changed       []NativeMemory
+	Removed       []string
+}
+
+// UpdateNativeChanged is UpdateNative, reporting what the write changed.
+func UpdateNativeChanged(path string, change func(mems []NativeMemory) ([]NativeMemory, bool, error)) (Written, error) {
+	var w Written
 	unlock, err := LockNative(path)
 	if err != nil {
-		return err
+		return w, err
 	}
 	defer unlock()
+	if w.Before, err = StatFile(path); err != nil {
+		if !errors.Is(err, os.ErrNotExist) {
+			return w, err
+		}
+		w.Before = FileStat{-1, -1} // no file yet: no index recorded it
+	}
 	mems, err := LoadNative(path)
 	if err != nil {
-		return err
+		return w, err
+	}
+	if st, err := StatFile(path); err == nil && st != w.Before {
+		// LoadNative repaired duplicates and saved: the file is no longer
+		// the one an index may have recorded. Make Before say so.
+		w.Before = FileStat{-1, -1}
+	}
+	before := make(map[string]NativeMemory, len(mems))
+	for _, m := range CloneNative(mems) {
+		before[m.ID] = m
 	}
 	out, save, err := change(mems)
 	if err != nil || !save {
-		return err
+		w.After = w.Before
+		return w, err
 	}
-	return SaveNative(path, out)
+	if err := SaveNative(path, out); err != nil {
+		return w, err
+	}
+	kept := make(map[string]bool, len(out))
+	for _, m := range out {
+		kept[m.ID] = true
+		if old, ok := before[m.ID]; !ok || !reflect.DeepEqual(old, m) {
+			w.Changed = append(w.Changed, m)
+		}
+	}
+	for id := range before {
+		if !kept[id] {
+			w.Removed = append(w.Removed, id)
+		}
+	}
+	sort.Strings(w.Removed)
+	w.Changed = CloneNative(w.Changed)
+	w.After, err = StatFile(path)
+	return w, err
 }

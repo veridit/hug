@@ -23,6 +23,10 @@ type captureBatch struct {
 	retire      map[string]bool   // sid -> has upstream mirrors
 	reinforce   map[string]string // receipt -> upstream sid
 	dirty       bool
+	// written is what the last save did to the native file, for a caller
+	// that indexes only that (App.indexWritten).
+	written ingest.Written
+	saved   bool
 }
 
 func newCaptureBatch() (*captureBatch, error) {
@@ -218,9 +222,11 @@ func (c *captureBatch) save(ctx context.Context, a *App) error {
 	if c.dirty {
 		// The batch spans model calls, so it does not hold the write lock. Merge
 		// its own edits onto the file as it is now, keeping other writers' work.
-		if err := ingest.MergeSave(NativePath(), c.base, c.mems); err != nil {
+		w, err := ingest.MergeSaveChanged(NativePath(), c.base, c.mems)
+		if err != nil {
 			return err
 		}
+		c.written, c.saved = w, true
 		c.base = ingest.CloneNative(c.mems)
 	}
 	// No reindex here: graph/community work belongs to the next recall/index pass.

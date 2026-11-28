@@ -86,13 +86,18 @@ func TestNoEmbedUnderWriteLocks(t *testing.T) {
 	}
 	b := f.Bind(t, "global")
 	// A new memory: the duplicate check's query and the memory's vector.
-	before := p.calls.Load()
+	before, passes := p.calls.Load(), a.Indexer.Passes
 	u, _, err := b.Remember(ctx, a, "Synthetic lockprobe walrus memory about kelp forests.", "fact", "global", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if p.calls.Load() == before {
-		t.Fatal("remember embedded nothing: the probe saw no call")
+	// One embed: the text before the turn serves the duplicate check and
+	// is the new memory's vector (t0qap9 check 6: no pass, no re-embed).
+	if got := p.calls.Load() - before; got != 1 {
+		t.Fatalf("remember made %d embed calls, want 1", got)
+	}
+	if n := a.Indexer.Passes - passes; n != 0 {
+		t.Fatalf("remember ran %d full index passes, want 0", n)
 	}
 	if !hasVector(t, a, u) {
 		t.Fatalf("remembered memory %s has no vector after the remember", u.SID)

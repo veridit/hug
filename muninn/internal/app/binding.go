@@ -725,7 +725,7 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 		if _, err = b.WriteScope(u.Scope); err != nil {
 			return store.Unit{}, false, err
 		}
-		if err = fillTrigger(u.SID, tr); err != nil {
+		if err = fillTrigger(ctx, a, u.SID, tr); err != nil {
 			return store.Unit{}, false, err
 		}
 		score := 0.0
@@ -759,7 +759,7 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 	if len(hits) > 0 {
 		h := hits[0]
 		if h.Semantic >= automatic {
-			if err := fillTrigger(h.Unit.SID, tr); err != nil {
+			if err := fillTrigger(ctx, a, h.Unit.SID, tr); err != nil {
 				return store.Unit{}, false, err
 			}
 			return b.reinforceMemory(ctx, a, h.Unit, h.Semantic, "cosine meets dedupe threshold")
@@ -772,13 +772,14 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 	if branch != "" || cond.Text != "" {
 		repo = b.workRepo() // only then: a git lookup per remember is not free
 	}
-	m, reinforced, err := ingest.RememberWith(NativePath(), ingest.Remembering{Content: content, Category: category, Type: NormalType(decision.Type), Scope: scope, Tags: tags,
+	m, reinforced, written, err := ingest.RememberWritten(NativePath(), ingest.Remembering{Content: content, Category: category, Type: NormalType(decision.Type), Scope: scope, Tags: tags,
 		SafeReason: safeReason, NewReason: decision.NewReason, Branch: branch, Holds: cond.Text, Repo: repo, Trigger: tr,
 		OriginFor: project.OriginForScope(scope)})
 	if err != nil {
 		return store.Unit{}, false, err
 	}
-	if _, err := a.Reindex(ctx); err != nil {
+	// Index only what this write changed (t0qap9 check 6), no full pass.
+	if err := a.indexWritten(ctx, written); err != nil {
 		return store.Unit{}, false, err
 	}
 	u, err := b.Resolve(a, m.ID)
@@ -797,7 +798,7 @@ func (b Binding) RememberPlaced(ctx context.Context, a *App, content, category, 
 // fillTrigger is the trigger side of a reinforce (jrj1vq): no trigger stated
 // keeps the memory's; one stated fills a memory that has none; a different
 // one is refused (crab: a changed trigger is a correction, --supersedes).
-func fillTrigger(sid string, tr *trigger.Trigger) error {
+func fillTrigger(ctx context.Context, a *App, sid string, tr *trigger.Trigger) error {
 	if tr == nil {
 		return nil
 	}
@@ -815,8 +816,11 @@ func fillTrigger(sid string, tr *trigger.Trigger) error {
 		if !trigger.Empty(m.Trigger) {
 			return &ingest.TriggerChangeError{ID: m.ID, SID: sid, Old: m.Trigger, New: tr}
 		}
-		_, _, err := ingest.ReplaceTrigger(NativePath(), m.ID, tr)
-		return err
+		_, _, written, err := ingest.ReplaceTriggerWritten(NativePath(), m.ID, tr)
+		if err != nil {
+			return err
+		}
+		return a.indexWritten(ctx, written)
 	}
 	return notOwnedTrigger(sid)
 }
@@ -832,14 +836,14 @@ func (b Binding) replaceTrigger(ctx context.Context, a *App, old store.Unit, tr 
 	if _, err := b.WriteScope(old.Scope); err != nil {
 		return store.Unit{}, false, err
 	}
-	_, found, err := ingest.ReplaceTrigger(NativePath(), old.SID, tr)
+	_, found, written, err := ingest.ReplaceTriggerWritten(NativePath(), old.SID, tr)
 	if err != nil {
 		return store.Unit{}, false, err
 	}
 	if !found {
 		return store.Unit{}, false, notOwnedTrigger(old.SID)
 	}
-	if _, err := a.Reindex(ctx); err != nil {
+	if err := a.indexWritten(ctx, written); err != nil {
 		return store.Unit{}, false, err
 	}
 	u, err := b.Resolve(a, old.SID)
